@@ -12,6 +12,7 @@ export default class App extends Component {
     this.state = {
       artists: [],
       selectedArtist: null,
+      ArtistTopAlbums: null,
     };
   }
 
@@ -41,9 +42,17 @@ export default class App extends Component {
         this.setState({
           selectedArtist,
         });
-        console.log(`getArtistObject ${JSON.stringify(selectedArtist)}`);
         console.log('click');
-        console.log(query);
+        // console.log(query);
+        // console.log(`getArtistObject ${JSON.stringify(selectedArtist)}`);
+      });
+    axios
+      .post(`http://ws.audioscrobbler.com/2.0/?method=artist.gettopalbums&mbid=${query}&api_key=${API_KEY}&format=json`)
+      .then((data) => {
+        const ArtistTopAlbums = data.data.topalbums;
+        this.setState({
+          ArtistTopAlbums,
+        });
       });
   };
 
@@ -52,7 +61,7 @@ export default class App extends Component {
       <div >
         <SearchBar getArtists={this.getArtists} />
         <ArtistList artists={this.state.artists} getSelectedArtist={this.getSelectedArtist} />
-        <ArtistDetails artist={this.state.selectedArtist} />
+        <ArtistDetails artist={this.state.selectedArtist} albums={this.state.ArtistTopAlbums} />
       </div>
     );
   }
